@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/home/user/Documents/Learn Blockchain Projects/hardhat-lottery/contracts/Raffle.sol": {
-      "lastModificationDate": 1659239994348,
-      "contentHash": "91f8eec02099903db64ed85b182cfdef",
+      "lastModificationDate": 1659240827303,
+      "contentHash": "dafb6bbb5521670907660ca107968524",
       "sourceName": "contracts/Raffle.sol",
       "solcConfig": {
         "version": "0.8.15",
