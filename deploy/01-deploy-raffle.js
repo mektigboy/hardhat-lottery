@@ -13,13 +13,13 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
     const chainId = network.config.chainId;
     let vrfCoordinatorV2Address, subscriptionId;
 
-    if (developmentChains.includes(network.name)) {
+    if (chainId == 31337) {
         const vrfCoordinatorV2Mock = await ethers.getContract(
             "VRFCoordinatorV2Mock"
         );
         vrfCoordinatorV2Address = vrfCoordinatorV2Mock.address;
         const transactionResponse =
-            await vrfCoordinatorV2Mock.createSubscription(1);
+            await vrfCoordinatorV2Mock.createSubscription();
         const transactionReceipt = await transactionResponse.wait(1);
         subscriptionId = transactionReceipt.events[0].args.subId;
         await vrfCoordinatorV2Mock.fundSubscription(
@@ -44,7 +44,7 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
         interval,
     ];
     const raffle = await deploy("Raffle", {
-        from: deployers,
+        from: deployer,
         log: true,
         args: args,
         waitConfirmations: network.config.blockConfirmations || 1,
@@ -60,4 +60,4 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
     }
 };
 
-module.exports.tags = ["all", "raffle"]
+module.exports.tags = ["all", "raffle"];
