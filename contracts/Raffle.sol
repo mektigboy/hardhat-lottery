@@ -8,12 +8,16 @@ import "@chainlink/contracts/src/v0.8/interfaces/KeeperCompatibleInterface.sol";
 error Raffle__NotEnoughEtherEntered();
 error Raffle__TransferFailed();
 error Raffle__NotOpen();
-error Raffle__UpkeepNotNeeded(uint256 currentBalance, uint256 numPlayers, uint256 raffleState);
+error Raffle__UpkeepNotNeeded(
+    uint256 currentBalance,
+    uint256 numPlayers,
+    uint256 raffleState
+);
 
 /// @title Raffle Contract
 /// @author mektigboy
 /// @notice Creates a raffle contract.
-/// @dev This contract uses VRF for randomness.
+/// @dev This contract implements Chainlink VRF v2 and Chainlink Keepers.
 contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
     // Type Declarations:
     enum RaffleState {
@@ -74,7 +78,7 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
     /// 3. Our subscription is funded with LINK.
     /// 4. The lottery should be in an "open" state.
     function checkUpkeep(
-        bytes calldata /*checkData*/
+        bytes memory /*checkData*/
     )
         public
         override
@@ -120,6 +124,7 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
         s_recentWinner = recentWinner;
         s_raffleState = RaffleState.Open;
         s_players = new address payable[](0);
+        s_lastTimeStamp = block.timestamp;
         (bool success, ) = recentWinner.call{value: address(this).balance}("");
         if (!success) revert Raffle__TransferFailed();
         emit WinnerPicked(recentWinner);
@@ -135,5 +140,25 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
 
     function getWinner() public view returns (address) {
         return s_recentWinner;
+    }
+
+    function getRaffleState() public view returns (RaffleState) {
+        return s_raffleState;
+    }
+
+    function getNumberOfWords() public pure returns (uint256) {
+        return NUM_WORDS;
+    }
+
+    function getNumberOfPlayers() public view returns (uint256) {
+        return s_players.length;
+    }
+
+    function getLatestTimeStamp() public view returns (uint256) {
+        return s_lastTimeStamp;
+    }
+
+    function getRequestConfirmations() public pure returns (uint256) {
+        return REQUEST_CONFIRMATIONS;
     }
 }
