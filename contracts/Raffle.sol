@@ -8,6 +8,7 @@ import "@chainlink/contracts/src/v0.8/interfaces/KeeperCompatibleInterface.sol";
 error Raffle__NotEnoughEtherEntered();
 error Raffle__TransferFailed();
 error Raffle__NotOpen();
+error Raffle__UpkeepNotNeeded(uint256 currentBalance, uint256 numPlayers, uint256 raffleState);
 
 /// @title Raffle Contract
 /// @author mektigboy
@@ -74,7 +75,14 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
     /// 4. The lottery should be in an "open" state.
     function checkUpkeep(
         bytes calldata /*checkData*/
-    ) external override returns (bool upkeepNeeded, bytes memory /* performData */) {
+    )
+        public
+        override
+        returns (
+            bool upkeepNeeded,
+            bytes memory /* performData */
+        )
+    {
         bool isOpen = (RaffleState.Open == s_raffleState);
         bool timePassed = ((block.timestamp - s_lastTimeStamp) > i_interval);
         bool hasPlayers = (s_players.length > 0);
@@ -82,7 +90,16 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
         upkeepNeeded = (isOpen && timePassed && hasPlayers && hasBalance);
     }
 
-    function requestRandomWinner() external {
+    function performUpkeep(
+        bytes memory /* performData */
+    ) external override {
+        (bool upkeepNeeded, ) = checkUpkeep("");
+        if (!upkeepNeeded)
+            revert Raffle__UpkeepNotNeeded(
+                address(this).balance,
+                s_players.length,
+                uint256(s_raffleState)
+            );
         s_raffleState = RaffleState.Calculating;
         uint256 requestId = i_vrfCoordinator.requestRandomWords(
             i_gasLane,
