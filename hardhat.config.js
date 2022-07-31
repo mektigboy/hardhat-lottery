@@ -19,7 +19,7 @@ module.exports = {
             chainId: 31337,
             blockConfirmations: 1,
         },
-        hardhat: {
+        rinkeby: {
             chainId: 4,
             blockConfirmations: 6,
             url: RINKEBY_RPC_URL,
