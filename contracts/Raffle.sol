@@ -8,8 +8,8 @@ error Raffle__NotEnoughEtherEntered();
 
 /// @title Raffle Contract
 /// @author mektigboy
-/// @notice Creates a sample raffle contract.
-/// @dev Uses VRF.
+/// @notice Creates a raffle contract.
+/// @dev This contract uses VRF for randomness.
 contract Raffle is VRFConsumerBaseV2 {
     uint256 private immutable i_entranceFee;
     address payable[] private s_players;
@@ -21,6 +21,7 @@ contract Raffle is VRFConsumerBaseV2 {
     uint32 private constant NUM_WORDS = 1;
 
     event RaffleEnter(address indexed player);
+    event RequestedRaffleWinner(uint256 indexed requestId);
 
     constructor(
         address vrfCoordinatorV2,
@@ -42,19 +43,23 @@ contract Raffle is VRFConsumerBaseV2 {
         emit RaffleEnter(msg.sender);
     }
 
-    function pickRandomWinner() external {}
-
-    function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords)
-        internal
-        override
-    {
-        i_vrfCoordinator.requestRandomWords(
+    function pickRandomWinner() external {
+        uint256 requestId = i_vrfCoordinator.requestRandomWords(
             i_gasLane,
             i_subscriptionId,
             REQUEST_CONFIRMATIONS,
             i_callbackGasLimit,
             NUM_WORDS
         );
+        emit RequestedRaffleWinner(requestId);
+    }
+
+    function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords)
+        internal
+        override
+    {
+        uint256 indexOfWinner = randomWords[0] % s_players.length;
+        address payable recentWinner = s_players[indexOfWinner];
     }
 
     function getEntranceFee() public view returns (uint256) {
