@@ -21,8 +21,8 @@ error Raffle__UpkeepNotNeeded(
 contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
     // Type Declarations:
     enum RaffleState {
-        Open,
-        Calculating
+        OPEN,
+        CALCULATING
     }
 
     // State Variables:
@@ -58,14 +58,14 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
         i_gasLane = gasLane;
         i_subscriptionId = subscriptionId;
         i_callbackGasLimit = callbackGasLimit;
-        s_raffleState = RaffleState.Open;
+        s_raffleState = RaffleState.OPEN;
         s_lastTimeStamp = block.timestamp;
         i_interval = interval;
     }
 
     function enterRaffle() public payable {
         if (msg.value < i_entranceFee) revert Raffle__NotEnoughEtherEntered();
-        if (s_raffleState != RaffleState.Open) revert Raffle__NotOpen();
+        if (s_raffleState != RaffleState.OPEN) revert Raffle__NotOpen();
         s_players.push(payable(msg.sender));
         emit RaffleEnter(msg.sender);
     }
@@ -87,7 +87,7 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
             bytes memory /* performData */
         )
     {
-        bool isOpen = (RaffleState.Open == s_raffleState);
+        bool isOpen = (RaffleState.OPEN == s_raffleState);
         bool timePassed = ((block.timestamp - s_lastTimeStamp) > i_interval);
         bool hasPlayers = (s_players.length > 0);
         bool hasBalance = address(this).balance > 0;
@@ -104,7 +104,7 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
                 s_players.length,
                 uint256(s_raffleState)
             );
-        s_raffleState = RaffleState.Calculating;
+        s_raffleState = RaffleState.CALCULATING;
         uint256 requestId = i_vrfCoordinator.requestRandomWords(
             i_gasLane,
             i_subscriptionId,
@@ -122,7 +122,7 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
         uint256 indexOfWinner = randomWords[0] % s_players.length;
         address payable recentWinner = s_players[indexOfWinner];
         s_recentWinner = recentWinner;
-        s_raffleState = RaffleState.Open;
+        s_raffleState = RaffleState.OPEN;
         s_players = new address payable[](0);
         s_lastTimeStamp = block.timestamp;
         (bool success, ) = recentWinner.call{value: address(this).balance}("");
