@@ -13,7 +13,7 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
     const chainId = network.config.chainId;
     let vrfCoordinatorV2Address, subscriptionId;
 
-    if (chainId == 31337) {
+    if (developmentChains.includes(network.name)) {
         const vrfCoordinatorV2Mock = await ethers.getContract(
             "VRFCoordinatorV2Mock"
         );
@@ -45,8 +45,8 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
     ];
     const raffle = await deploy("Raffle", {
         from: deployer,
-        log: true,
         args: args,
+        log: true,
         waitConfirmations: network.config.blockConfirmations || 1,
     });
 
@@ -56,8 +56,8 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
     ) {
         log("Verifying...");
         await verify(raffle.address, args);
-        log("--------------------------------------------------");
     }
+    log("--------------------------------------------------");
 };
 
 module.exports.tags = ["all", "raffle"];
