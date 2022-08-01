@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/home/user/Documents/Learn Blockchain Projects/hardhat-lottery/contracts/Raffle.sol": {
-      "lastModificationDate": 1659281535529,
-      "contentHash": "811aff9273110c9395273c2c280a48d0",
+      "lastModificationDate": 1659317892334,
+      "contentHash": "e41a280fe0eb5614636a37998646f159",
       "sourceName": "contracts/Raffle.sol",
       "solcConfig": {
         "version": "0.8.15",
@@ -302,6 +302,48 @@
         "^0.8.15"
       ],
       "artifacts": []
+    },
+    "/home/user/Documents/Learn Blockchain Projects/hardhat-lottery/node_modules/hardhat/console.sol": {
+      "lastModificationDate": 1659224315206,
+      "contentHash": "cc4777addd464ea56fa35b1c45df0591",
+      "sourceName": "hardhat/console.sol",
+      "solcConfig": {
+        "version": "0.8.15",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.4.22 <0.9.0"
+      ],
+      "artifacts": [
+        "console"
+      ]
     }
   }
 }
