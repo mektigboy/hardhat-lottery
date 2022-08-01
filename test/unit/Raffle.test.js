@@ -172,5 +172,7 @@ const {
                       vrfCoordinatorV2Mock.fulfillRandomWords(1, raffle.address)
                   ).to.be.revertedWith("nonexistent request");
               });
+
+              it("Picks a winner, resets the lottery, and sends money", async function () {});
           });
       });
