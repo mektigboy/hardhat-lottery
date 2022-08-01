@@ -27,15 +27,11 @@ module.exports = {
         },
     },
     gasReporter: {
-        enabled: true,
+        enabled: false,
+        currency: "USD",
         outputFile: "gas-report.txt",
         noColors: true,
-        currency: "USD",
-        coinmarketcap: COINMARKETCAP_API_KEY,
-        token: "ETH",
-    },
-    etherscan: {
-        apiKey: process.env.ETHERSCAN_API_KEY,
+        // coinmarketcap: COINMARKETCAP_API_KEY,
     },
     namedAccounts: {
         deployer: {
